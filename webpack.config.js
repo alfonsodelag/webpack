@@ -1,13 +1,19 @@
+const path= require("path");
+const webpack= require("webpack");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
     module: {
-        rules: [
+        rules: 
+        [
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: "babel-loader"
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env"]
+                    }
                 }
             },
             {
@@ -22,10 +28,15 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|svg|jpg|gif)$/,
-                use: [
-                    'file-loader'
-                ]
+                test: /\.(png|jp(e*g)|svg)$/,
+                use: [{
+                    loader: 'url-loader',
+                    options: {
+                        limit: 8000,
+                        name: 'images/[hash]-[name].[ext]',
+                        esModule: false,
+                    }
+                }]
             },
             {
                 test: /\.scss$/,
@@ -38,6 +49,10 @@ module.exports = {
         ]
     },
     plugins: [
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+        }),
         new HtmlWebPackPlugin({
             template: "./src/index.html",
             filename: "./index.html"
